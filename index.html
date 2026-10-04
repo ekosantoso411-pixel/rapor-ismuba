@@ -923,14 +923,14 @@
         ];
 
         const defaultPengaturan = {
-            namaSekolah: 'SMP MUHAMMADIYAH SURAKARTA',
-            alamatSekolah: 'Jl. KH. Ahmad Dahlan No. 1, Surakarta | Telp: (0271) 712345 | Web: smpmuh-surakarta.sch.id',
-            kotaCetak: 'Surakarta',
+            namaSekolah: 'SMP MUHAMMADIYAH MUHAMMADIYAH 2 DEPOK',
+            alamatSekolah: 'Jl. Swadaya IV, Karangasem, Condongcatur, Depok, Sleman, Yogyakarta | Telp: (0274) 4462295 | Web: smpmuh2depok.sch.id',
+            kotaCetak: 'Sleman',
             tanggalCetak: new Date().toISOString().split('T')[0],
-            namaGuru: 'Ust. H. Ahmad Dahlan, M.Pd.',
-            nipGuru: '10928374',
-            namaKepsek: 'Drs. H. Muhammad Sudja\', M.Ag.',
-            nipKepsek: '98374612'
+            namaGuru: 'Ganjar Rachmawan Adiprana, M.Pd.',
+            nipGuru: '-',
+            namaKepsek: 'Hendro Sucipto, M.Pd.',
+            nipKepsek: '1060557'
         };
 
         let state = {
@@ -1052,7 +1052,7 @@
         function loadPengaturanForm() {
             document.getElementById('cfgNamaSekolah').value = state.pengaturan.namaSekolah || '';
             document.getElementById('cfgAlamatSekolah').value = state.pengaturan.alamatSekolah || '';
-            document.getElementById('cfgKotaCetak').value = state.pengaturan.kotaCetak || 'Surakarta';
+            document.getElementById('cfgKotaCetak').value = state.pengaturan.kotaCetak || 'Sleman';
             document.getElementById('cfgTanggalCetak').value = state.pengaturan.tanggalCetak || new Date().toISOString().split('T')[0];
             document.getElementById('cfgNamaGuru').value = state.pengaturan.namaGuru || '';
             document.getElementById('cfgNipGuru').value = state.pengaturan.nipGuru || '';
@@ -1779,8 +1779,8 @@
                                 <div class="text-center">
                                     <h2 class="font-extrabold text-slate-900 text-lg uppercase tracking-wide leading-tight">MAJELIS PENDIDIKAN DASAR MENENGAH DAN PNF</h2>
                                     <h2 class="font-extrabold text-slate-900 text-lg uppercase tracking-wide leading-tight">PIMPINAN DAERAH MUHAMMADIYAH KABUPATEN SLEMAN</h2>
-                                    <h3 class="font-bold text-slate-900 text-base uppercase leading-tight">${cfg.namaSekolah || 'SMP MUHAMMADIYAH SURAKARTA'}</h3>
-                                    <p class="text-[8.5pt] text-slate-700 font-medium">${cfg.alamatSekolah || 'Jl. KH. Ahmad Dahlan No. 1, Surakarta | Email: info@smpmuh.sch.id'}</p>
+                                    <h3 class="font-bold text-slate-900 text-base uppercase leading-tight">${cfg.namaSekolah || 'SMP MUHAMMADIYAH 2 DEPOK'}</h3>
+                                    <p class="text-[8.5pt] text-slate-700 font-medium">${cfg.alamatSekolah || 'Jl. Swadaya VI, Karangasem, Condongcatur, Depok, Sleman, Yogyakarta | Email: smpmuh2depok@gmail.com'}</p>
                                 </div>
                             </div>
                         </div>
@@ -1873,17 +1873,17 @@
                                 <p class="border-b border-slate-900 font-bold pb-0.5">( ............................................ )</p>
                             </div>
                             <div class="text-center w-64">
-                                <p class="mb-1">${cfg.kotaCetak || 'Surakarta'}, ${formattedDate}</p>
+                                <p class="mb-1">${cfg.kotaCetak || 'Sleman'}, ${formattedDate}</p>
                                 <p class="font-semibold mb-16">Guru ISMUBA / Wali Kelas</p>
-                                <p class="font-bold underline">${cfg.namaGuru || 'Ust. H. Ahmad Dahlan, M.Pd.'}</p>
+                                <p class="font-bold underline">${cfg.namaGuru || 'Ganjar Rachmawan Adiprana, M.Pd.'}</p>
                                 <p class="text-[8.5pt]">NIP/NBM: ${cfg.nipGuru || '-'}</p>
                             </div>
                         </div>
                         <div class="flex justify-center text-[9.5pt] text-slate-900 mt-4">
                             <div class="text-center w-64">
                                 <p class="font-semibold mb-16">Kepala Sekolah</p>
-                                <p class="font-bold underline">${cfg.namaKepsek || 'Drs. H. Muhammad Sudja\', M.Ag.'}</p>
-                                <p class="text-[8.5pt]">NIP/NBM: ${cfg.nipKepsek || '-'}</p>
+                                <p class="font-bold underline">${cfg.namaKepsek || 'Hendro Sucipto, M.Ag.'}</p>
+                                <p class="text-[8.5pt]">NIP/NBM: ${cfg.nipKepsek || '1060557'}</p>
                             </div>
                         </div>
                     </div>
