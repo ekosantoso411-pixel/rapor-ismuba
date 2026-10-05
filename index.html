@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>eRapor ISMUBA - SMP Muhammadiyah</title>
+    <title>eRapor ISMUBA - Muhadesta</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts Inter -->
@@ -118,7 +118,7 @@
                 </div>
                 <h1 class="text-2xl font-bold text-slate-800 tracking-tight">eRapor ISMUBA</h1>
                 <p class="text-xs font-semibold text-emerald-700 tracking-wider uppercase mt-1">Al-Islam, Kemuhammadiyahan & Bahasa Arab</p>
-                <p class="text-xs text-slate-500 mt-0.5">Jenjang SMP Muhammadiyah</p>
+                <p class="text-xs text-slate-500 mt-0.5">Muhadesta Smart School</p>
             </div>
 
             <form id="loginForm" class="space-y-4">
@@ -128,7 +128,7 @@
                         <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
                             <i data-lucide="user" class="w-4 h-4"></i>
                         </span>
-                        <input type="text" id="loginUser" required placeholder="Masukkan username" value="admin_ismuba"
+                        <input type="text" id="loginUser" required placeholder="Masukkan username" value="admin"
                             class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:bg-white outline-none transition">
                     </div>
                 </div>
@@ -139,8 +139,11 @@
                         <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
                             <i data-lucide="lock" class="w-4 h-4"></i>
                         </span>
-                        <input type="password" id="loginPassword" required placeholder="••••••••" value="ismuba123"
-                            class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:bg-white outline-none transition">
+                        <input type="password" id="loginPassword" required placeholder="••••••••" value="admin123"
+                            class="w-full pl-10 pr-10 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:bg-white outline-none transition">
+                        <button type="button" onclick="togglePasswordVisibility()" class="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hover:text-slate-600 transition outline-none" title="Tampilkan / Sembunyikan Password">
+                            <i id="togglePasswordIcon" data-lucide="eye" class="w-4 h-4"></i>
+                        </button>
                     </div>
                 </div>
 
@@ -171,7 +174,7 @@
             </form>
 
             <div class="mt-6 text-center text-xs text-slate-400 border-t pt-4">
-                &copy; 2026 Majelis Pendidikan Dasar Menengah dan PNF - ISMUBA SMP
+                &copy; 2026 Developed by SMP Muhammadiyah 2 Depok Smart School
             </div>
         </div>
     </div>
@@ -189,7 +192,7 @@
                         </div>
                         <div>
                             <h2 class="font-bold text-white text-base leading-tight">eRapor ISMUBA</h2>
-                            <p class="text-xs text-emerald-400 font-medium">SMP Muhammadiyah</p>
+                            <p class="text-xs text-emerald-400 font-medium">Muhadesta</p>
                         </div>
                     </div>
                     <button id="toggleSidebarBtn" class="md:hidden text-slate-400 hover:text-white p-1">
@@ -255,7 +258,7 @@
                     </div>
                     <div class="truncate">
                         <p class="text-xs font-semibold text-white truncate" id="sessionUserDisplay">Admin Ismuba</p>
-                        <p class="text-[10px] text-emerald-400 truncate" id="sessionTaDisplay">2026/2027 Ganjil</p>
+                        <p class="text-[10px] text-emerald-400 truncate" id="sessionTaDisplay">2026/2027 Semester Ganjil</p>
                     </div>
                 </div>
                 <button onclick="logout()" class="w-full flex items-center justify-center gap-2 py-2 px-3 bg-red-600/20 hover:bg-red-600 text-red-300 hover:text-white rounded-md text-xs font-medium transition">
@@ -293,7 +296,7 @@
                         <div class="relative z-10 max-w-2xl">
                             <h2 class="text-2xl font-bold mb-2">Selamat Datang di eRapor ISMUBA SMP</h2>
                             <p class="text-emerald-100 text-sm leading-relaxed">
-                                Sistem Penilaian Al-Islam, Kemuhammadiyahan, dan Bahasa Arab berbasis Kurikulum Merdeka. Pengolahan Nilai, Tahfidz, Pembiasaan, dan Cetak Rapor Standar Kertas F4.
+                                Sistem Penilaian Al-Islam, Kemuhammadiyahan, dan Bahasa Arab berbasis digital. Pengolahan Nilai, Tahfidz, Pembiasaan, dan Cetak Rapor Standar Kertas F4.
                             </p>
                         </div>
                         <div class="absolute -right-6 -bottom-10 opacity-20 pointer-events-none">
@@ -380,9 +383,9 @@
                                     <thead>
                                         <tr class="bg-slate-50 border-b text-xs uppercase text-slate-500">
                                             <th class="p-2.5">Kode</th>
-                                            <th class="p-2.5">Nama Mata Pelajaran</th>
+                                            <th class="p-2.5">Mata Pelajaran</th>
                                             <th class="p-2.5">Jenjang Kelas</th>
-                                            <th class="p-2.5">KKTP Default</th>
+                                            <th class="p-2.5">KKTP</th>
                                         </tr>
                                     </thead>
                                     <tbody id="dashboardMapelTable" class="divide-y divide-slate-100">
@@ -898,6 +901,12 @@
 
     <!-- JavaScript Logic -->
     <script>
+        // Akun Login Pengguna
+        const validUsers = {
+            'admin': ['admin123'],
+            'guru.ismuba': ['yanu123', 'ganjar123', 'benih123', 'badar123']
+        };
+
         const defaultMapel = [
             { id: 'm1', kode: 'AI-01', nama: 'Al-Qur\'an Hadits', kelas: 'Semua', kktp: 75, cp: 'Membaca, menghafal, serta memahami kandungan ayat-ayat Al-Qur\'an dan Hadits pilihan tentang peribadatan dan keutamaan menuntut ilmu.' },
             { id: 'm2', kode: 'AI-02', nama: 'Aqidah Akhlak', kelas: 'Semua', kktp: 75, cp: 'Memahami pilar Rukun Iman, Asmaul Husna, serta menerapkan perilaku akhlakul karimah kepada kedua orang tua, guru, dan sesama.' },
@@ -923,19 +932,19 @@
         ];
 
         const defaultPengaturan = {
-            namaSekolah: 'SMP MUHAMMADIYAH MUHAMMADIYAH 2 DEPOK',
-            alamatSekolah: 'Jl. Swadaya IV, Karangasem, Condongcatur, Depok, Sleman, Yogyakarta | Telp: (0274) 4462295 | Web: smpmuh2depok.sch.id',
+            namaSekolah: 'SMP MUHAMMADIYAH 2 DEPOK',
+            alamatSekolah: 'Jl. Swadaya IV, Karangasem, Condongcatur, Depok, Sleman | Telp: (0274) 4462295 | Web: smpmuh2depok.sch.id',
             kotaCetak: 'Sleman',
             tanggalCetak: new Date().toISOString().split('T')[0],
             namaGuru: 'Ganjar Rachmawan Adiprana, M.Pd.',
-            nipGuru: '-',
+            nipGuru: '1101704',
             namaKepsek: 'Hendro Sucipto, M.Pd.',
             nipKepsek: '1060557'
         };
 
         let state = {
             user: null,
-            tahunSemester: '2026/2027 - Semester Ganjil',
+            tahunSemester: '2026/2027 - Ganjil',
             pengaturan: JSON.parse(localStorage.getItem('ismuba_pengaturan')) || defaultPengaturan,
             mapel: JSON.parse(localStorage.getItem('ismuba_mapel')) || defaultMapel,
             siswa: JSON.parse(localStorage.getItem('ismuba_siswa')) || defaultSiswa,
@@ -972,15 +981,39 @@
             }, 3000);
         }
 
+        function togglePasswordVisibility() {
+            const pwdInput = document.getElementById('loginPassword');
+            const toggleIcon = document.getElementById('togglePasswordIcon');
+            if (!pwdInput || !toggleIcon) return;
+
+            if (pwdInput.type === 'password') {
+                pwdInput.type = 'text';
+                toggleIcon.setAttribute('data-lucide', 'eye-off');
+            } else {
+                pwdInput.type = 'password';
+                toggleIcon.setAttribute('data-lucide', 'eye');
+            }
+            if (window.lucide) {
+                lucide.createIcons();
+            }
+        }
+
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            const u = document.getElementById('loginUser').value;
+            const u = document.getElementById('loginUser').value.trim();
+            const p = document.getElementById('loginPassword').value;
             const ts = document.getElementById('loginTahunSemester').value;
+
+            const userPasswords = validUsers[u];
+            if (!userPasswords || !userPasswords.includes(p)) {
+                showToast('Username atau password tidak sesuai!', 'error');
+                return;
+            }
 
             state.user = u;
             state.tahunSemester = ts;
 
-            document.getElementById('sessionUserDisplay').innerText = u;
+            document.getElementById('sessionUserDisplay').innerText = u.toUpperCase();
             document.getElementById('sessionTaDisplay').innerText = ts;
             document.getElementById('activeSemesterBadge').innerText = ts;
 
@@ -1180,12 +1213,10 @@
         }
 
         function deleteMapel(id) {
-            if(confirm('Apakah Anda yakin ingin menghapus mata pelajaran ini?')) {
-                state.mapel = state.mapel.filter(x => x.id !== id);
-                saveDataToStorage();
-                renderMapelTable();
-                showToast('Mata Pelajaran berhasil dihapus.');
-            }
+            state.mapel = state.mapel.filter(x => x.id !== id);
+            saveDataToStorage();
+            renderMapelTable();
+            showToast('Mata Pelajaran berhasil dihapus.');
         }
 
         function renderSiswaTable() {
@@ -1272,12 +1303,10 @@
         }
 
         function deleteSiswa(id) {
-            if(confirm('Hapus data siswa ini?')) {
-                state.siswa = state.siswa.filter(x => x.id !== id);
-                saveDataToStorage();
-                renderSiswaTable();
-                showToast('Data siswa berhasil dihapus.');
-            }
+            state.siswa = state.siswa.filter(x => x.id !== id);
+            saveDataToStorage();
+            renderSiswaTable();
+            showToast('Data siswa berhasil dihapus.');
         }
 
         function exportSiswaExcel() {
@@ -1350,13 +1379,6 @@
             loadNilaiForm();
         }
 
-        /* -------------------------------------------------------------
-           PERHITUNGAN KRITERIA PREDIKAT:
-           90 - 100 : A
-           75 - 89  : B
-           61 - 74  : C
-           0  - 60  : D
-        ------------------------------------------------------------- */
         function calculatePredikatAndDeskripsi(score, kktp, cpText) {
             const val = parseFloat(score);
             if(isNaN(val) || score === '' || score === null) return { predikat: '-', deskripsi: 'Belum ada penilaian' };
@@ -1727,7 +1749,7 @@
         function generateSingleRaporHTML(siswa) {
             const semesterArr = state.tahunSemester.split(' - ');
             const tahunAjaran = semesterArr[0] || '2026/2027';
-            const semesterText = semesterArr[1] || 'Semester Ganjil';
+            const semesterText = semesterArr[1] || 'Ganjil';
 
             const cfg = state.pengaturan;
             const formattedDate = cfg.tanggalCetak 
@@ -1777,24 +1799,24 @@
                             <div class="flex items-center justify-center gap-4 mb-1">
                                 <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgx_0RkNHbB0s6bXMzSMwreEnoew2ZvUIavhDV3pcgozC6cesZOgnTRv0qP8XqpLZiEpkSTVTa2-22oXCAqc9DBgujPzv0MYIV8bvrbZOB8iPPCdKtzdu1Orbs0AmB_5EICUypKqZVjcc8tHSlAzjVPQ_HcrWmahUixzis_L7B5dr5UXRX1IoQk6BJy-Rhp/s1600/logo%20dikdas%20hijau.png" alt="Logo Dikdasmen" class="w-24 h-24 object-contain flex-shrink-0">
                                 <div class="text-center">
-                                    <h2 class="font-extrabold text-slate-900 text-lg uppercase tracking-wide leading-tight">MAJELIS PENDIDIKAN DASAR MENENGAH DAN PNF</h2>
-                                    <h2 class="font-extrabold text-slate-900 text-lg uppercase tracking-wide leading-tight">PIMPINAN DAERAH MUHAMMADIYAH KABUPATEN SLEMAN</h2>
-                                    <h3 class="font-bold text-slate-900 text-base uppercase leading-tight">${cfg.namaSekolah || 'SMP MUHAMMADIYAH 2 DEPOK'}</h3>
-                                    <p class="text-[8.5pt] text-slate-700 font-medium">${cfg.alamatSekolah || 'Jl. Swadaya VI, Karangasem, Condongcatur, Depok, Sleman, Yogyakarta | Email: smpmuh2depok@gmail.com'}</p>
+                                    <h2 class="font-bold text-slate-900 text-lg uppercase tracking-wide leading-tight">MAJELIS PENDIDIKAN DASAR MENENGAH DAN PNF</h2>
+                                    <h2 class="font-bold text-slate-900 text-lg uppercase tracking-wide leading-tight">PIMPINAN DAERAH MUHAMMADIYAH KABUPATEN SLEMAN</h2>
+                                    <h3 class="font-extrabold text-slate-1000 text-base uppercase leading-tight">${cfg.namaSekolah || 'SMP MUHAMMADIYAH 2 DEPOK'}</h3>
+                                    <p class="text-[8.5pt] text-slate-700 font-medium">${cfg.alamatSekolah || 'Jl. Swadaya IV, Karangasem, Condongcatur, Depok, Sleman | Email: smpmuh2depok@gmail.com'}</p>
                                 </div>
                             </div>
                         </div>
 
                         <div class="text-center font-bold text-[12pt] uppercase mb-3 underline tracking-wide">
-                            LAPORAN HASIL BELAJAR PESERTA DIDIK (RAPOR ISMUBA)
+                            LAPORAN HASIL BELAJAR ISMUBA
                         </div>
 
                         <!-- IDENTITAS SISWA -->
                         <div class="grid grid-cols-2 gap-x-6 gap-y-1 bg-slate-50 p-2.5 rounded border border-slate-300 mb-4 text-[9.5pt]">
-                            <div class="flex"><span class="w-32 font-semibold text-slate-600">Nama Peserta Didik</span><span class="font-bold text-slate-900">: ${siswa.nama}</span></div>
-                            <div class="flex"><span class="w-32 font-semibold text-slate-600">Kelas</span><span class="font-bold text-slate-900">: ${siswa.kelas}</span></div>
+                            <div class="flex"><span class="w-32 font-semibold text-slate-600">Nama Siswa</span><span class="font-bold text-slate-900">: ${siswa.nama}</span></div>
+                            <div class="flex"><span class="w-32 font-semibold text-slate-600">Kelas / Semester</span><span class="font-bold text-slate-900">: ${siswa.kelas} / ${semesterText}</span></div>
                             <div class="flex"><span class="w-32 font-semibold text-slate-600">NIS / NISN</span><span class="font-bold text-slate-900">: ${siswa.nis}</span></div>
-                            <div class="flex"><span class="w-32 font-semibold text-slate-600">Semester / TA</span><span class="font-bold text-slate-900">: ${semesterText} / ${tahunAjaran}</span></div>
+                            <div class="flex"><span class="w-32 font-semibold text-slate-600">Tahun Ajaran</span><span class="font-bold text-slate-900">: ${tahunAjaran}</span></div>
                         </div>
 
                         <!-- A. MATA PELAJARAN ISMUBA -->
@@ -1825,18 +1847,18 @@
                             <table class="w-full border-collapse border border-slate-300 text-[9.5pt]">
                                 <thead>
                                     <tr class="bg-slate-100 text-slate-900 font-bold border-b border-slate-300">
-                                        <th class="p-2 border-r border-slate-300 text-center">Target / Surah Hafalan</th>
-                                        <th class="p-2 border-r border-slate-300 w-16 text-center">Nilai</th>
-                                        <th class="p-2 border-r border-slate-300 w-16 text-center">Predikat</th>
-                                        <th class="p-2 text-center">Catatan Perkembangan Hafalan</th>
+                                        <th class="p-2 border-r border-slate-300 text-center w-1/3">Target / Surah Hafalan</th>
+                                        <th class="p-2 border-r border-slate-300 text-center w-16">Nilai</th>
+                                        <th class="p-2 border-r border-slate-300 text-center w-20">Predikat</th>
+                                        <th class="p-2 text-center">Deskripsi / Catatan Pembimbing</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
+                                    <tr class="border-b border-slate-300">
                                         <td class="p-2 border-r border-slate-300 font-medium">${tData.surah}</td>
                                         <td class="p-2 border-r border-slate-300 text-center font-bold">${tData.score}</td>
                                         <td class="p-2 border-r border-slate-300 text-center font-bold">${tData.predikat}</td>
-                                        <td class="p-2 leading-tight">${tData.catatan}</td>
+                                        <td class="p-2 text-slate-800 text-[9.5pt]">${tData.catatan}</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -1848,42 +1870,45 @@
                             <table class="w-full border-collapse border border-slate-300 text-[9.5pt]">
                                 <thead>
                                     <tr class="bg-slate-100 text-slate-900 font-bold border-b border-slate-300">
-                                        <th class="p-2 border-r border-slate-300 text-center">Aspek Pembiasaan / Karakter</th>
-                                        <th class="p-2 border-r border-slate-300 w-28 text-center">Predikat</th>
-                                        <th class="p-2 text-center">Deskripsi Catatan Perkembangan</th>
+                                        <th class="p-2 border-r border-slate-300 text-center w-32">Predikat Sikap</th>
+                                        <th class="p-2 text-center">Deskripsi Catatan Perkembangan Karakter</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td class="p-2 border-r border-slate-300 font-medium">Sikap, Shalat Berjamaah, Tadarus & Kedisiplinan</td>
+                                    <tr class="border-b border-slate-300">
                                         <td class="p-2 border-r border-slate-300 text-center font-bold">${pData.predikat}</td>
-                                        <td class="p-2 leading-tight">${pData.deskripsi}</td>
+                                        <td class="p-2 text-slate-800 text-[9.5pt]">${pData.deskripsi}</td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
                     </div>
 
-                    <!-- TANDA TANGAN -->
+                    <!-- FOOTER / TANDA TANGAN -->
                     <div class="mt-6 pt-2">
-                        <div class="flex justify-between text-[9.5pt] text-slate-900">
-                            <div class="text-center w-56">
+                        <div class="flex justify-between text-[9.5pt] mb-8">
+                            <div class="text-center w-1/3">
                                 <p class="mb-1">Mengetahui,</p>
-                                <p class="font-semibold mb-16">Orang Tua / Wali Siswa</p>
-                                <p class="border-b border-slate-900 font-bold pb-0.5">( ............................................ )</p>
+                                <p class="font-medium">Orang Tua / Wali Siswa</p>
+                                <div class="h-16"></div>
+                                <p class="font-bold underline">( .................................... )</p>
                             </div>
-                            <div class="text-center w-64">
+                            <div class="text-center w-1/3">
                                 <p class="mb-1">${cfg.kotaCetak || 'Sleman'}, ${formattedDate}</p>
-                                <p class="font-semibold mb-16">Guru ISMUBA / Wali Kelas</p>
-                                <p class="font-bold underline">${cfg.namaGuru || 'Ganjar Rachmawan Adiprana, M.Pd.'}</p>
-                                <p class="text-[8.5pt]">NIP/NBM: ${cfg.nipGuru || '-'}</p>
+                                <p class="font-medium">Guru ISMUBA / Wali Kelas</p>
+                                <div class="h-16"></div>
+                                <p class="font-bold underline">${cfg.namaGuru || 'Ganjar Rachmawan A., M.Pd.'}</p>
+                                <p class="text-[8.5pt]">NIP/NBM. ${cfg.nipGuru || '1101704'}</p>
                             </div>
                         </div>
-                        <div class="flex justify-center text-[9.5pt] text-slate-900 mt-4">
-                            <div class="text-center w-64">
-                                <p class="font-semibold mb-16">Kepala Sekolah</p>
-                                <p class="font-bold underline">${cfg.namaKepsek || 'Hendro Sucipto, M.Ag.'}</p>
-                                <p class="text-[8.5pt]">NIP/NBM: ${cfg.nipKepsek || '1060557'}</p>
+
+                        <div class="flex justify-center text-[9.5pt]">
+                            <div class="text-center w-1/2">
+                                <p class="font-medium">Mengetahui,</p>
+                                <p class="font-bold">Kepala Sekolah</p>
+                                <div class="h-16"></div>
+                                <p class="font-bold underline">${cfg.namaKepsek || 'Hendro Sucipto, M.Pd.'}</p>
+                                <p class="text-[8.5pt]">NIP/NBM. ${cfg.nipKepsek || '1060557'}</p>
                             </div>
                         </div>
                     </div>
@@ -1893,38 +1918,32 @@
 
         function renderRaporSheet() {
             const container = document.getElementById('raporPrintContainer');
-            container.innerHTML = '';
-
             const mode = document.getElementById('raporMode').value;
             const kelas = document.getElementById('raporSelectKelas').value;
 
-            if(mode === 'single') {
+            container.innerHTML = '';
+
+            if (mode === 'single') {
                 const siswaId = document.getElementById('raporSelectSiswa').value;
                 const siswa = state.siswa.find(s => s.id === siswaId);
-                if(siswa) {
+                if (siswa) {
                     container.innerHTML = generateSingleRaporHTML(siswa);
                 } else {
-                    container.innerHTML = `<div class="p-8 text-center text-slate-500 bg-white rounded-lg shadow">Pilih siswa untuk melihat pratinjau rapor.</div>`;
+                    container.innerHTML = '<div class="p-8 text-center text-slate-500">Pilih siswa untuk menampilkan rapor.</div>';
                 }
             } else {
                 const siswaInKelas = state.siswa.filter(s => s.kelas === kelas);
-                if(siswaInKelas.length === 0) {
-                    container.innerHTML = `<div class="p-8 text-center text-slate-500 bg-white rounded-lg shadow">Tidak ada siswa di kelas ${kelas}.</div>`;
+                if (siswaInKelas.length === 0) {
+                    container.innerHTML = `<div class="p-8 text-center text-slate-500">Tidak ada siswa di kelas ${kelas}.</div>`;
                     return;
                 }
-                let htmlAll = '';
-                siswaInKelas.forEach(siswa => {
-                    htmlAll += generateSingleRaporHTML(siswa);
+                let html = '';
+                siswaInKelas.forEach(s => {
+                    html += generateSingleRaporHTML(s);
                 });
-                container.innerHTML = htmlAll;
+                container.innerHTML = html;
             }
         }
-
-        // Initialize Lucide icons on load
-        document.addEventListener('DOMContentLoaded', () => {
-            lucide.createIcons();
-            loadPengaturanForm();
-        });
     </script>
 </body>
 </html>
