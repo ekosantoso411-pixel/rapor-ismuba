@@ -1404,6 +1404,13 @@
                 state.userData = authenticatedUser;
                 state.tahunSemester = ts;
 
+                // --- MENYIMPAN SESI LOGIN KE LOCAL STORAGE ---
+                localStorage.setItem('ismuba_session', JSON.stringify({
+                    user: state.user,
+                    userData: state.userData,
+                    tahunSemester: state.tahunSemester
+                }));
+
                 const displayName = authenticatedUser.nama || u.toUpperCase();
                 document.getElementById('sessionUserDisplay').innerText = displayName;
                 document.getElementById('sessionTaDisplay').innerText = ts;
@@ -1469,6 +1476,10 @@
         function logout() {
             state.user = null;
             state.userData = null;
+            
+            // --- MENGHAPUS SESI LOGIN DARI LOCAL STORAGE SAAT LOGOUT ---
+            localStorage.removeItem('ismuba_session');
+            
             document.getElementById('loginSection').classList.remove('hidden');
             document.getElementById('mainDashboard').classList.add('hidden');
             showToast('Berhasil keluar dari sistem.', 'success');
@@ -2576,8 +2587,41 @@
 
         window.addEventListener('DOMContentLoaded', () => {
             lucide.createIcons();
-            // Awal load default biarkan berjalan, akan di-overwrite saat user login sukses.
-            updateRaporSiswaList();
+            
+            // --- PENGECEKAN SESI LOGIN DARI LOCAL STORAGE SAAT HALAMAN DIMUAT ---
+            const savedSession = localStorage.getItem('ismuba_session');
+            
+            if (savedSession) {
+                try {
+                    const session = JSON.parse(savedSession);
+                    state.user = session.user;
+                    state.userData = session.userData;
+                    state.tahunSemester = session.tahunSemester;
+
+                    const displayName = state.userData.nama || state.user.toUpperCase();
+                    document.getElementById('sessionUserDisplay').innerText = displayName;
+                    document.getElementById('sessionTaDisplay').innerText = state.tahunSemester;
+                    document.getElementById('activeSemesterBadge').innerText = state.tahunSemester;
+
+                    const initials = displayName.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase();
+                    document.getElementById('userAvatarBadge').innerText = initials || 'USR';
+
+                    // Sembunyikan halaman login dan tampilkan dashboard
+                    document.getElementById('loginSection').classList.add('hidden');
+                    document.getElementById('mainDashboard').classList.remove('hidden');
+
+                    // Terapkan kembali filter data sesuai role guru
+                    applyTeacherClassFilter();
+                    populateMapelDropdownNilai();
+                    initDashboardData();
+                } catch (e) {
+                    console.error("Gagal membaca session:", e);
+                    updateRaporSiswaList();
+                }
+            } else {
+                // Jika tidak ada session, biarkan di halaman login
+                updateRaporSiswaList();
+            }
         });
     </script>
 </body>
