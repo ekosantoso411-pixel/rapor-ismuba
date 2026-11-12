@@ -262,22 +262,6 @@
                     </button>
                 </nav>
             </div>
-
-            <div class="p-4 border-t border-slate-800 bg-slate-950/50 space-y-3">
-                <div class="flex items-center gap-3 pt-1">
-                    <div class="w-8 h-8 rounded-full bg-emerald-700 text-white flex items-center justify-center font-bold text-xs" id="userAvatarBadge">
-                        ADM
-                    </div>
-                    <div class="truncate">
-                        <p class="text-xs font-semibold text-white truncate" id="sessionUserDisplay">Admin Ismuba</p>
-                        <p class="text-[10px] text-emerald-400 truncate" id="sessionTaDisplay">2026/2027 Semester Ganjil</p>
-                    </div>
-                </div>
-                <button onclick="logout()" class="w-full flex items-center justify-center gap-2 py-2 px-3 bg-red-600/20 hover:bg-red-600 text-red-300 hover:text-white rounded-md text-xs font-medium transition">
-                    <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
-                    <span>Keluar / Logout</span>
-                </button>
-            </div>
         </aside>
 
         <main class="flex-1 flex flex-col min-w-0 bg-slate-50 overflow-y-auto">
@@ -290,11 +274,32 @@
                     <h1 id="pageTitle" class="text-lg font-bold text-slate-800">Dashboard Utama</h1>
                 </div>
 
-                <div class="flex items-center gap-3 text-xs">
-                    <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-full font-medium">
+                <div class="flex items-center gap-4 text-xs">
+                    <!-- Status Semester -->
+                    <span class="hidden md:inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-full font-medium">
                         <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
                         <span id="activeSemesterBadge">2026/2027 - Semester Ganjil</span>
                     </span>
+
+                    <!-- Garis Pemisah (Hanya tampil di layar besar) -->
+                    <div class="hidden md:block w-px h-8 bg-slate-200"></div>
+
+                    <!-- Info User -->
+                    <div class="flex items-center gap-3">
+                        <div class="text-right hidden sm:block">
+                            <p class="text-xs font-bold text-slate-800 truncate" id="sessionUserDisplay">Admin Ismuba</p>
+                            <p class="text-[10px] text-slate-500 truncate" id="sessionTaDisplay">2026/2027 Semester Ganjil</p>
+                        </div>
+                        <div class="w-8 h-8 rounded-full bg-emerald-700 text-white flex items-center justify-center font-bold text-xs flex-shrink-0" id="userAvatarBadge">
+                            ADM
+                        </div>
+                    </div>
+
+                    <!-- Tombol Logout -->
+                    <button onclick="logout()" class="flex items-center justify-center gap-2 py-2 px-3 bg-red-50 hover:bg-red-100 text-red-600 border border-red-100 rounded-md text-xs font-medium transition" title="Keluar dari Sistem">
+                        <i data-lucide="log-out" class="w-4 h-4"></i>
+                        <span class="hidden sm:inline-block">Logout</span>
+                    </button>
                 </div>
             </header>
 
