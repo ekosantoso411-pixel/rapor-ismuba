@@ -667,6 +667,15 @@
                                     <i data-lucide="wand-2" class="w-3.5 h-3.5"></i>
                                     <span>Generate Otomatis Kelas</span>
                                 </button>
+                                <button onclick="exportTahfidzExcel()" class="px-3 py-2 bg-slate-700 hover:bg-slate-800 text-white rounded-lg text-xs font-medium flex items-center gap-1.5 shadow transition">
+                                    <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                                    <span>Export Tahfidz (.xlsx)</span>
+                                </button>
+                                <label class="px-3 py-2 bg-emerald-100 hover:bg-emerald-200 text-emerald-800 border border-emerald-300 rounded-lg text-xs font-medium cursor-pointer flex items-center gap-1.5 shadow-sm transition">
+                                    <i data-lucide="upload" class="w-3.5 h-3.5"></i>
+                                    <span>Import Tahfidz (.xlsx)</span>
+                                    <input type="file" id="importTahfidzFile" accept=".xlsx, .xls" class="hidden" onchange="importTahfidzExcel(event)">
+                                </label>
                                 <button onclick="saveAllTahfidz()" id="btnSaveTahfidzMain" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-medium rounded-lg flex items-center gap-1.5 shadow transition">
                                     <i data-lucide="cloud-upload" class="w-3.5 h-3.5"></i>
                                     <span id="txtSaveTahfidz">Simpan Nilai</span>
@@ -714,6 +723,15 @@
                                     <i data-lucide="wand-2" class="w-3.5 h-3.5"></i>
                                     <span>Generate Otomatis Kelas</span>
                                 </button>
+                                <button onclick="exportPembiasaanExcel()" class="px-3 py-2 bg-slate-700 hover:bg-slate-800 text-white rounded-lg text-xs font-medium flex items-center gap-1.5 shadow transition">
+                                    <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                                    <span>Export Pembiasaan (.xlsx)</span>
+                                </button>
+                                <label class="px-3 py-2 bg-emerald-100 hover:bg-emerald-200 text-emerald-800 border border-emerald-300 rounded-lg text-xs font-medium cursor-pointer flex items-center gap-1.5 shadow-sm transition">
+                                    <i data-lucide="upload" class="w-3.5 h-3.5"></i>
+                                    <span>Import Pembiasaan (.xlsx)</span>
+                                    <input type="file" id="importPembiasaanFile" accept=".xlsx, .xls" class="hidden" onchange="importPembiasaanExcel(event)">
+                                </label>
                                 <button onclick="saveAllPembiasaan()" id="btnSavePembiasaanMain" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-medium rounded-lg flex items-center gap-1.5 shadow transition">
                                     <i data-lucide="cloud-upload" class="w-3.5 h-3.5"></i>
                                     <span id="txtSavePembiasaan">Simpan Data</span>
@@ -1859,6 +1877,7 @@
         async function importSiswaExcel(event) {
             const file = event.target.files[0];
             if(!file) return;
+            event.target.value = ''; // Reset input agar file yang sama bisa diimport ulang
 
             const reader = new FileReader();
             reader.onload = async function(e) {
@@ -2123,6 +2142,7 @@
         async function importNilaiExcel(event) {
             const file = event.target.files[0];
             if(!file) return;
+            event.target.value = ''; // Reset input agar file yang sama bisa diimport ulang
 
             const mapelId = document.getElementById('nilaiSelectMapel').value;
             if(!mapelId) return showToast('Pilih Mata Pelajaran dahulu.', 'error');
@@ -2293,6 +2313,147 @@
             showToast(`Data Tahfidz kelas ${kelas} di-generate otomatis.`);
         }
 
+        // --- FUNGSI EXPORT & IMPORT NILAI TAHFIDZ (.XLSX) ---
+        function exportTahfidzExcel() {
+            const kelas = document.getElementById('tahfidzSelectKelas').value;
+            if (!kelas) {
+                showToast('Pilih kelas tahfidz terlebih dahulu.', 'error');
+                return;
+            }
+
+            const siswaInKelas = state.siswa.filter(s => s.kelas === kelas);
+            if (siswaInKelas.length === 0) {
+                showToast(`Tidak ada data siswa di kelas ${kelas}.`, 'warning');
+                return;
+            }
+
+            const exportData = siswaInKelas.map((s, idx) => {
+                const key = `${s.id}_TAHFIDZ_${state.tahunSemester}`;
+                const saved = state.tahfidz[key];
+                const surah = saved ? saved.surah : (defaultSurahTarget[kelas] || 'Juz 30');
+                const score = saved && saved.score !== undefined ? saved.score : '';
+                const predikat = saved && saved.predikat ? saved.predikat : '';
+                const catatan = saved && saved.catatan ? saved.catatan : '';
+
+                return {
+                    'No': idx + 1,
+                    'NIS/NISN': s.nis,
+                    'Nama Siswa': s.nama,
+                    'Kelas': s.kelas,
+                    'Target / Surah Hafalan': surah,
+                    'Nilai': score,
+                    'Predikat': predikat,
+                    'Deskripsi / Catatan Pembimbing': catatan
+                };
+            });
+
+            const ws = XLSX.utils.json_to_sheet(exportData);
+            ws['!cols'] = [
+                { wch: 5 },
+                { wch: 15 },
+                { wch: 28 },
+                { wch: 10 },
+                { wch: 36 },
+                { wch: 10 },
+                { wch: 10 },
+                { wch: 60 }
+            ];
+
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, `Tahfidz ${kelas}`);
+            XLSX.writeFile(wb, `Nilai_Tahfidz_ISMUBA_${kelas}.xlsx`);
+            showToast(`Export nilai tahfidz kelas ${kelas} selesai.`, 'success');
+        }
+
+        async function importTahfidzExcel(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            event.target.value = ''; // Reset input agar file yang sama bisa diimport ulang
+
+            const kelas = document.getElementById('tahfidzSelectKelas').value;
+            if (!kelas) {
+                event.target.value = '';
+                return showToast('Pilih kelas tahfidz terlebih dahulu.', 'error');
+            }
+
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const jsonData = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
+
+                    let updated = 0;
+                    jsonData.forEach(row => {
+                        const nis = row['NIS/NISN'] !== undefined ? row['NIS/NISN'] : (row['NIS'] !== undefined ? row['NIS'] : row['nis']);
+                        if (nis === undefined || nis === '') return;
+
+                        const student = state.siswa.find(s => String(s.nis).trim() === String(nis).trim());
+                        if (!student) return;
+
+                        const rawScore = row['Nilai'] !== undefined ? row['Nilai'] : (row['Nilai Akhir'] !== undefined ? row['Nilai Akhir'] : row['Score']);
+                        const rawSurah = row['Target / Surah Hafalan'] || row['Target/Surah Hafalan'] || row['Surah'] || row['Target'];
+                        const rawCatatan = row['Deskripsi / Catatan Pembimbing'] || row['Catatan Pembimbing'] || row['Deskripsi'] || row['Catatan'];
+
+                        if (rawScore === undefined || rawScore === '') return;
+
+                        const num = parseFloat(rawScore);
+                        if (isNaN(num)) return;
+
+                        let predikat = 'D';
+                        let autoCatatan = 'Ananda belum mampu menguasai target hafalan dengan baik, masih perlu bimbingan, makhrajul huruf dan penerapan tajwid masih perlu diperbaiki melalui latihan rutin dan bimbingan intensif.';
+
+                        if (num >= 90) {
+                            predikat = 'A';
+                            autoCatatan = 'Ananda memiliki hafalan yang sangat kuat (mutqin), kelancaran yang luar biasa, serta mampu menerapkan kaidah tajwid (makhraj dan shifatul huruf) dengan sangat tepat. Irama dan tartilnya juga sangat baik.';
+                        } else if (num >= 75) {
+                            predikat = 'B';
+                            autoCatatan = 'Ananda memiliki hafalan yang lancar dan bagus. Secara umum, tajwid dan makhraj huruf sudah diterapkan dengan baik, hanya terdapat sedikit kekeliruan kecil yang bisa langsung diperbaiki saat diingatkan.';
+                        } else if (num >= 61) {
+                            predikat = 'C';
+                            autoCatatan = 'Ananda telah menyelsaikan beberapa target hafalan, tetapi masih terdapat beberapa kesalahan dalam kelancaran, makhrajul huruf, dan penerapan tajwid sehingga perlu latihan';
+                        }
+
+                        const key = `${student.id}_TAHFIDZ_${state.tahunSemester}`;
+                        const existing = state.tahfidz[key] || {};
+                        const finalSurah = rawSurah ? String(rawSurah).trim() : (existing.surah || defaultSurahTarget[student.kelas] || 'Juz 30');
+                        const finalCatatan = (rawCatatan !== undefined && String(rawCatatan).trim() !== '') ? String(rawCatatan).trim() : autoCatatan;
+
+                        state.tahfidz[key] = {
+                            surah: finalSurah,
+                            score: num,
+                            predikat: predikat,
+                            catatan: finalCatatan
+                        };
+                        updated++;
+                    });
+
+                    saveDataToStorage();
+                    loadTahfidzTable();
+                    updateDashboardStats();
+
+                    if (updated > 0) {
+                        showToast(`Berhasil import ${updated} nilai tahfidz. Menyimpan ke Google Sheets...`, 'warning');
+                        const res = await sendToGoogleSheets('saveTahfidz', {
+                            tahfidz: state.tahfidz,
+                            siswa: state.siswa
+                        });
+                        if (res && res.status === 'success') {
+                            showToast(`Sukses! ${updated} nilai tahfidz telah terekam di Google Sheets.`, 'success');
+                        }
+                    } else {
+                        showToast('Tidak ada data nilai tahfidz valid yang cocok untuk diimport.', 'warning');
+                    }
+                } catch (err) {
+                    console.error(err);
+                    showToast('Gagal memproses file Excel nilai tahfidz.', 'error');
+                } finally {
+                    event.target.value = '';
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
         function loadPembiasaanTable() {
             const kelas = document.getElementById('pembiasaanSelectKelas').value;
             const tbody = document.getElementById('pembiasaanTableBody');
@@ -2399,6 +2560,142 @@
             saveDataToStorage();
             loadPembiasaanTable();
             showToast(`Data Pembiasaan kelas ${kelas} di-generate.`);
+        }
+
+        // --- FUNGSI EXPORT & IMPORT PEMBIASAAN KARAKTER (.XLSX) ---
+        function exportPembiasaanExcel() {
+            const kelas = document.getElementById('pembiasaanSelectKelas').value;
+            if (!kelas) {
+                showToast('Pilih kelas pembiasaan terlebih dahulu.', 'error');
+                return;
+            }
+
+            const siswaInKelas = state.siswa.filter(s => s.kelas === kelas);
+            if (siswaInKelas.length === 0) {
+                showToast(`Tidak ada data siswa di kelas ${kelas}.`, 'warning');
+                return;
+            }
+
+            const exportData = siswaInKelas.map((s, idx) => {
+                const key = `${s.id}_PEMBIASAAN_${state.tahunSemester}`;
+                const saved = state.pembiasaan[key];
+                const predikat = saved && saved.predikat ? saved.predikat : '';
+                const deskripsi = saved && saved.deskripsi ? saved.deskripsi : '';
+
+                return {
+                    'No': idx + 1,
+                    'NIS/NISN': s.nis,
+                    'Nama Siswa': s.nama,
+                    'Kelas': s.kelas,
+                    'Predikat Pembiasaan': predikat,
+                    'Deskripsi Catatan Perkembangan Karakter': deskripsi
+                };
+            });
+
+            const ws = XLSX.utils.json_to_sheet(exportData);
+            ws['!cols'] = [
+                { wch: 5 },
+                { wch: 15 },
+                { wch: 28 },
+                { wch: 10 },
+                { wch: 20 },
+                { wch: 65 }
+            ];
+
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, `Pembiasaan ${kelas}`);
+            XLSX.writeFile(wb, `Pembiasaan_Karakter_ISMUBA_${kelas}.xlsx`);
+            showToast(`Export data pembiasaan kelas ${kelas} selesai.`, 'success');
+        }
+
+        async function importPembiasaanExcel(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            event.target.value = ''; // Reset input agar file yang sama bisa diimport ulang
+
+            const kelas = document.getElementById('pembiasaanSelectKelas').value;
+            if (!kelas) {
+                event.target.value = '';
+                return showToast('Pilih kelas pembiasaan terlebih dahulu.', 'error');
+            }
+
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const jsonData = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
+
+                    let updated = 0;
+                    jsonData.forEach(row => {
+                        const nis = row['NIS/NISN'] !== undefined ? row['NIS/NISN'] : (row['NIS'] !== undefined ? row['NIS'] : row['nis']);
+                        if (nis === undefined || nis === '') return;
+
+                        const student = state.siswa.find(s => String(s.nis).trim() === String(nis).trim());
+                        if (!student) return;
+
+                        const rawPredikat = row['Predikat Pembiasaan'] !== undefined ? row['Predikat Pembiasaan'] : (row['Predikat'] !== undefined ? row['Predikat'] : row['predikat']);
+                        const rawDeskripsi = row['Deskripsi Catatan Perkembangan Karakter'] !== undefined ? row['Deskripsi Catatan Perkembangan Karakter'] : (row['Deskripsi'] !== undefined ? row['Deskripsi'] : (row['Catatan'] !== undefined ? row['Catatan'] : row['deskripsi']));
+
+                        if ((rawPredikat === undefined || String(rawPredikat).trim() === '') && (rawDeskripsi === undefined || String(rawDeskripsi).trim() === '')) {
+                            return;
+                        }
+
+                        const predLower = String(rawPredikat || '').trim().toLowerCase();
+                        let normalizedPredikat = 'Baik';
+                        if (predLower === 'sangat baik' || predLower === 'a' || predLower === 'sb') {
+                            normalizedPredikat = 'Sangat Baik';
+                        } else if (predLower === 'baik' || predLower === 'b') {
+                            normalizedPredikat = 'Baik';
+                        } else if (predLower === 'cukup' || predLower === 'c') {
+                            normalizedPredikat = 'Cukup';
+                        } else if (predLower === 'perlu bimbingan' || predLower === 'd' || predLower === 'pb') {
+                            normalizedPredikat = 'Perlu Bimbingan';
+                        }
+
+                        let autoDeskripsi = 'Ananda melaksanakan shalat berjamaah dengan tertib, bersikap santun kepada guru dan kawan, serta mengikuti kegiatan keagamaan dengan baik.';
+                        if (normalizedPredikat === 'Sangat Baik') {
+                            autoDeskripsi = 'Ananda shalat berjamaah tepat waktu dan tertib, santun kepada guru dan kawan, serta aktif dalam kegiatan keagamaan.';
+                        } else if (normalizedPredikat === 'Cukup') {
+                            autoDeskripsi = 'Ananda mulai membiasakan diri melaksanakan shalat berjamaah, bersikap santun kepada guru dan kawan, serta mengikuti kegiatan keagamaan dengan arahan.';
+                        } else if (normalizedPredikat === 'Perlu Bimbingan') {
+                            autoDeskripsi = 'Ananda perlu bimbingan dan pendampingan dalam membiasakan shalat berjamaah tepat waktu, bersikap santun kepada guru dan kawan, serta berpartisipasi aktif dalam kegiatan keagamaan.';
+                        }
+
+                        const key = `${student.id}_PEMBIASAAN_${state.tahunSemester}`;
+                        const finalDeskripsi = (rawDeskripsi !== undefined && String(rawDeskripsi).trim() !== '') ? String(rawDeskripsi).trim() : autoDeskripsi;
+
+                        state.pembiasaan[key] = {
+                            predikat: normalizedPredikat,
+                            deskripsi: finalDeskripsi
+                        };
+                        updated++;
+                    });
+
+                    saveDataToStorage();
+                    loadPembiasaanTable();
+                    updateDashboardStats();
+
+                    if (updated > 0) {
+                        showToast(`Berhasil import ${updated} data pembiasaan. Menyimpan ke Google Sheets...`, 'warning');
+                        const res = await sendToGoogleSheets('savePembiasaan', {
+                            pembiasaan: state.pembiasaan,
+                            siswa: state.siswa
+                        });
+                        if (res && res.status === 'success') {
+                            showToast(`Sukses! ${updated} data pembiasaan telah terekam di Google Sheets.`, 'success');
+                        }
+                    } else {
+                        showToast('Tidak ada data pembiasaan valid yang cocok untuk diimport.', 'warning');
+                    }
+                } catch (err) {
+                    console.error(err);
+                    showToast('Gagal memproses file Excel pembiasaan karakter.', 'error');
+                } finally {
+                    event.target.value = '';
+                }
+            };
+            reader.readAsArrayBuffer(file);
         }
 
         function toggleRaporMode() {
